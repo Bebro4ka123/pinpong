@@ -24,26 +24,31 @@ class Player(GameSprite):
     def update(self):
         keys_pressed = key.get_pressed()
         if keys_pressed[K_UP] and self.rect.y > 5:
-            self.rect.x -= 10
+            self.rect.y -= 10
             
-        if keys_pressed[K_DOWN]and self.rect.y < 605:
-            self.rect.x += 10
-            
-    
-points = 0
-lost = 0             
-class Enemy(GameSprite):
+        if keys_pressed[K_DOWN]and self.rect.y < 395:
+            self.rect.y += 10
+class Player2(GameSprite):
     def update(self):
-        self.rect.y += self.speed
-        self.rect.x += self.speed
-        if self.rect.y > 500:
-            self.rect.x = randint(50,650)
-            self.rect.y = 0
-            global lost
-            lost += 1
-monsters = sprite.Group()
-font.init()
+        keys_pressed = key.get_pressed()
+        if keys_pressed[K_w] and self.rect.y > 5:
+            self.rect.y -= 10
+            
+        if keys_pressed[K_s]and self.rect.y < 395:
+            self.rect.y += 10
+            
+speed_x = 3
+speed_y = 3    
+points = 0
+
+
+ball = GameSprite('ball.png',150,100,40,40,10)
+                 
+
+
+
 #СДЕЛАЙ ШРИФТ СИСТЕМНЫМ - СМ. 7ОЙ СЛАЙД В ТЕОРИИ
+font.init()
 font1 = font.SysFont('Arial', 50)
 ladno = font.SysFont('Arial',50)
 okay = font.SysFont('Arial',50)
@@ -60,10 +65,8 @@ lose = font1.render(
 
 
 
-igrok = Player('pp.png',350,450,80,100,10)
-sprites_list = sprite.spritecollide(
-    igrok, monsters, False
-)
+igrok = Player('pp.png',0,200,40,100,10)
+igrok2 = Player2('pp.png',660,200,40,100,10)
 
 mixer.init()
 mixer.music.load('space.ogg')
@@ -73,16 +76,21 @@ while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
+    if finish != True:
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+        if ball.rect.y > 470 or ball.rect.y < 0:
+            speed_y *= -1
+        if ball.rect.x > 665 or ball.rect.x < 0:
+            speed_x *= -1 
+        if ball.rect.igrok:
+            speed_y *= -1        
        
 
 
-    if lost >=10:
-        window.blit(lose,(100,200))
-        finish = True
-    if sprite.spritecollide(igrok,monsters, False):
-        window.blit(lose,(100,200))
-        finish = True
+ 
 
+          
   
 
 
@@ -90,19 +98,18 @@ while game:
         window.blit(background,(0,0))
         igrok.update()
         igrok.reset()
+        igrok2.update()
+        igrok2.reset()
+        ball.update()
+        ball.reset()
         
             
             
-        kk = ladno.render( str(points),True,(100,100,0))
-        gg = okay.render( str(lost),True,(100,100,0))
-        monsters.draw(window)
-        monsters.update()
+        kk = ladno.render( str(score),True,(10,10,0))
+        window.blit(score,(10,10))
 
- 
-
-        window.blit(gg,(230,50))
     
-        window.blit(score,(20,20))
+        
  
 
     clock.tick(fps)
